@@ -1,0 +1,29 @@
+1. Commit
+    1) 데이터 삽입, 갱신, 삭제를 완전히 데이터베이스에 기록하는 것
+    2) 설정
+        -트랜스잭션 설정을 "Manual Commit"으로 설정함
+            -no auto commit
+            -DB 변경 작업 후 commit 혹은 rollback 명령을 실행해야 함
+
+2. INSERT 문
+    1) 테이블에 데이터를 입력
+    2) INSERT INTO TABLE_NAME VALUES(VALUE1, VALUE2,...);
+        -테이블의 컬럼 순서대로 입력
+       INSERT INTO TABLE_NAME(COLUMN1, COLUMNW) VALUES(VALUE1, VALUE2);
+        -테이블 컬럼을 지정
+    3) INSERT INTO ~ RETURNING *;
+       INSERT INTO ~ RETURNING 컬럼 지정;
+
+3. UPDATE 문
+    1) 테이블의 데이터를 수정함
+    2) UPDATE TABLE_NAME 
+       SET COLUMN1 = VALUE1
+           , COLUMN2 = VALUE2 
+       WHERE 조건;
+    3) UPDATE는 대상 행에 대해서 락(LOCK)을 잡음
+        -LOCK: 다른 사용자는 해당 행에 대해서 작업을 못함
+        -UPDATE를 한 후 빠르게 COMMIT을 하지 않는다면 RDBMS의 동시성이 낮아짐
+
+4. UPDATE JOIN 문
+    1) 조인 연산 및 UPDATE 연산을 동시에 처리할 수 있음
+    

@@ -16,14 +16,76 @@
 
 3. UPDATE 문
     1) 테이블의 데이터를 수정함
-    2) UPDATE TABLE_NAME 
+    2) 조건에 해당하는 컬럼의 값만 업데이트함
+       UPDATE TABLE_NAME 
        SET COLUMN1 = VALUE1
            , COLUMN2 = VALUE2 
        WHERE 조건;
+       WHERE절이 없으므로 테이블의 전체 행을 대상으로 업데이트함
+       UPDATE TABLE_NAME 
+       SET COLUMN1 = VALUE1;
     3) UPDATE는 대상 행에 대해서 락(LOCK)을 잡음
         -LOCK: 다른 사용자는 해당 행에 대해서 작업을 못함
         -UPDATE를 한 후 빠르게 COMMIT을 하지 않는다면 RDBMS의 동시성이 낮아짐
 
 4. UPDATE JOIN 문
     1) 조인 연산 및 UPDATE 연산을 동시에 처리할 수 있음
-    
+    2) UPDATE시 다른 테이블의 내용을 참조하고 싶을 때 UPDATE JOIN문 사용함 
+        -복잡한 업무를 처리하는데 유용한 방법임
+    3) UPDATE 타겟테이블 AS A               --UPDATE할 테이블 지정
+       SET A의특정컬럼 = 표현식              --특정 컬럼 UPDATE 
+       FROM 조인테이블 AS B                 --참조하는 테이블 지정
+       WHERE A.COLUMN1 = B.COLUMN1         --조인 조건
+
+5. DELETE문
+    1) 테이블에서 데이터를 삭제
+    2) DELETE 
+       FROM
+       TARGET_TABLE
+       WHERE 조건식;
+
+6. UPSERT문
+    1) INSERT를 시도할 때 조건(상황)에 따라 UPDATE를 할 수 있는 구문
+        -복잡한 업무를 처리하는데 유용한 방법임
+    2) 테이블에 특정 행을 입력할 때 이미 존재하는 행이라면 컬럼들을 UPDATE하고, 
+       존재하지 않는 행이라면 새로 INSERT하는 기능
+    3) INSERT INTO 테이블명(COLUMN1) VALUES (VALUE1)
+       ON CONFLICT 명령어(TARGET ACTION);           --충돌 시 다른 액션
+        -ON CONFLICT ~ DO nothing
+            -에러는 발생하지 않으면서 아무것도 하지 않는 것
+        -ON CONFLICT ~ DO UPDATE SET 
+
+7. GROUP BY절 
+    1) FROM절 및 WHERE절을 통해서 리턴된 행(집합)을 특정 컬럼 혹은 컬럼들을 기준으로 그룹화하는 기능임
+    2) SELECT   * | [DISTINCT] <column_name>[AS 별칭], ...    --5
+       FROM     테이블 이름(들) [AS 테이블이름 별칭]            --1
+       [WHERE 검색조건(들)]                                    --2
+       [GROUP BY 속성이름(들)]                                 --3
+       [HAVING  검색조건(들)]                                  --4
+       [OREDR BY 속성명[ASC|DESC]]                            --6
+       [LIMIT 보여주고싶은 개수]                               --7
+
+       SELECT COLUMN1                   --GROUP BY 컬럼 기재
+                , 집계함수(COLUMN2)
+       FROM  TABLE_NAME 
+       GROUP BY COLUMN1                 --N개 컬럼을 GROUP BY하는 경우
+       ;                                --','로 구분 
+
+8. HAVING절
+    1) GROUP BY절을 통해 도출된 집계 결과에 대해 조건을 줘서 리턴되는 결과 집합을 제한할 수 있음
+    2) HAVING절은 GROUP BY절에 의해 생성된 그룹행의 조건을 설정함
+        -cf: WHERE절은 GROUP BY절이 적용되기 전에 각 개별 행의 조건을 설정함
+    3) GROUP BY절과 함께 HAVING절을 사용하여 GROUP BY의 결과를 특정 조건으로 필터링하는 기능을 함
+    4) SELECT COLUMN1                   --GROUP BY 컬럼 기재
+                , 집계함수(COLUMN2)
+       FROM  TABLE_NAME 
+       GROUP BY COLUMN1                 --N개 컬럼을 GROUP BY하는 경우
+       HAVING 조건식
+       ;                                
+
+9. INTERSECT 연산
+    1) 2개 이상의 집합에 대한 교집합을 구할 수 있음
+    2) A집합과 B집합의 교집합만을 보여줌 
+    3) INTERSECT 연산 시 사용되는 SELECT문의 컬럼의 수와 순서가 동일해야함.
+    4) 순서가 일치하는 각각 컬럼의 데이터 유형(타입)이 일치해야 함 
+    5) 여러 개의 SQL문에 대한 교집합으로 중복된 행은 하나로 표시됨
